@@ -1,0 +1,85 @@
+.landing-container {
+    font-family: sans-serif;
+  }
+  
+  .landing-header {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: #eee;
+  }
+  
+  .hero {
+    text-align: center;
+    padding: 4rem 2rem;
+    background: #f8f8f8;
+  }
+  
+  .hero h2 {
+    font-size: 2rem;
+  }
+  
+  .hero button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: #2a9d8f;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+
+  .how-it-works {
+    padding: 4rem 2rem;
+    background: #ffffff;
+    text-align: center;
+  }
+  
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-top: 2rem;
+  }
+  
+  .step {
+    background: #f0f0f0;
+    padding: 1.5rem;
+    border-radius: 8px;
+  }
+  
+  @media (min-width: 768px) {
+    .steps {
+      flex-direction: row;
+      justify-content: center;
+    }
+  
+    .step {
+      width: 30%;
+    }
+  }
+
+  .for-riders {
+    background: #2a9d8f;
+    color: white;
+    padding: 4rem 2rem;
+    text-align: center;
+  }
+  
+  .for-riders button {
+    margin-top: 1rem;
+    padding: 0.75rem 1.5rem;
+    background: white;
+    color: #2a9d8f;
+    border: none;
+    border-radius: 6px;
+    font-weight: bold;
+    cursor: pointer;
+  }
+  
+  .landing-footer {
+    text-align: center;
+    padding: 2rem;
+    background: #eee;
+    font-size: 0.9rem;
+  }
