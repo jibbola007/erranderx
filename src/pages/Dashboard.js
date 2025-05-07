@@ -1,104 +1,125 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
+import "./Dashboard.css";
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend } from "recharts";
+
+const initialData = [
+  { name: "Jan", tasks: 1200, riders: 200, cpa: 3.5 },
+  { name: "Feb", tasks: 1900, riders: 270, cpa: 3.2 },
+  { name: "Mar", tasks: 3000, riders: 340, cpa: 2.8 },
+  { name: "Apr", tasks: 4200, riders: 480, cpa: 2.5 },
+];
 
 function Dashboard() {
-  const [tasks, setTasks] = useState([]);
-  const [newTask, setNewTask] = useState("");
+  const [data, setData] = useState(initialData);
+  const [newEntry, setNewEntry] = useState({ name: "", tasks: 0, riders: 0, cpa: 0 });
 
-  // Fetch tasks from the backend
-  useEffect(() => {
-    const fetchData = async () => {
-      const tasksResponse = await fetch("http://localhost:5000/tasks");
-      const tasksData = await tasksResponse.json();
-      setTasks(tasksData);
-    };
-
-    fetchData();
-  }, []);
-
-  // Add a new task
-  const addTask = async () => {
-    if (newTask.trim() === "") return;
-
-    const newTaskObject = {
-      name: newTask,
-      status: "In Progress",
-    };
-
-    // Post new task to the backend
-    const response = await fetch("http://localhost:5000/tasks", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newTaskObject),
-    });
-
-    const addedTask = await response.json();
-    setTasks((prevTasks) => [...prevTasks, addedTask]);
-    setNewTask(""); // Clear the input field
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setNewEntry({ ...newEntry, [name]: name === "name" ? value : parseFloat(value) });
   };
 
-  // Update task status (mark as complete)
-  const toggleTaskStatus = async (id, currentStatus) => {
-    const updatedStatus = currentStatus === "In Progress" ? "Completed" : "In Progress";
-
-    const updatedTask = { ...tasks.find((task) => task.id === id), status: updatedStatus };
-
-    const response = await fetch(`http://localhost:5000/tasks/${id}`, {
-      method: "PATCH",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(updatedTask),
-    });
-
-    const updatedTaskData = await response.json();
-    setTasks((prevTasks) =>
-      prevTasks.map((task) => (task.id === id ? updatedTaskData : task))
-    );
+  const handleAddEntry = () => {
+    if (newEntry.name) {
+      setData([...data, newEntry]);
+      setNewEntry({ name: "", tasks: 0, riders: 0, cpa: 0 });
+    }
   };
 
   return (
-    <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-6">Dashboard</h1>
+    <div className="dashboard-container">
+      <h1 className="dashboard-title">Erranderx Dashboard</h1>
 
-      <div className="mb-6">
-        <input
-          type="text"
-          value={newTask}
-          onChange={(e) => setNewTask(e.target.value)}
-          placeholder="Add a new task..."
-          className="p-2 border border-gray-300 rounded-md"
-        />
-        <button
-          onClick={addTask}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md ml-2"
-        >
-          Add Task
-        </button>
+      <h2 className="section-title">Performance Metrics</h2>
+      <div className="charts-container">
+        <div className="chart-card">
+          <h3>Tasks Completed</h3>
+          <LineChart width={400} height={200} data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="tasks" stroke="#8884d8" strokeWidth={2} />
+          </LineChart>
+        </div>
+
+        <div className="chart-card">
+          <h3>Riders Onboarded</h3>
+          <LineChart width={400} height={200} data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="riders" stroke="#82ca9d" strokeWidth={2} />
+          </LineChart>
+        </div>
+
+        <div className="chart-card">
+          <h3>Cost Per Acquisition (CPA)</h3>
+          <LineChart width={400} height={200} data={data}>
+            <CartesianGrid strokeDasharray="3 3" />
+            <XAxis dataKey="name" />
+            <YAxis />
+            <Tooltip />
+            <Legend />
+            <Line type="monotone" dataKey="cpa" stroke="#ffc658" strokeWidth={2} />
+          </LineChart>
+        </div>
       </div>
 
-      <div className="task-list">
-        <h2 className="text-2xl font-semibold mb-4">Task List</h2>
-        <ul className="list-none">
-          {tasks.map((task) => (
-            <li
-              key={task.id}
-              className={`bg-gray-100 p-4 rounded-lg mb-3 shadow-md ${
-                task.status === "Completed" ? "bg-green-100" : "bg-yellow-100"
-              }`}
-            >
-              <h3 className="text-xl font-medium">{task.name}</h3>
-              <p>Status: {task.status}</p>
-              <button
-                onClick={() => toggleTaskStatus(task.id, task.status)}
-                className="bg-blue-500 text-white px-4 py-2 rounded-md mt-2"
-              >
-                {task.status === "In Progress" ? "Mark as Complete" : "Mark as In Progress"}
-              </button>
-            </li>
-          ))}
-        </ul>
+      <div className="add-entry-form">
+        <h3>Add New Task Entry</h3>
+        <input
+          type="text"
+          name="name"
+          placeholder="Month"
+          value={newEntry.name}
+          onChange={handleChange}
+        />
+        <input
+          type="number"
+          name="tasks"
+          placeholder="Tasks"
+          value={newEntry.tasks}
+          onChange={handleChange}
+        />
+        <input
+          type="number"
+          name="riders"
+          placeholder="Riders"
+          value={newEntry.riders}
+          onChange={handleChange}
+        />
+        <input
+          type="number"
+          name="cpa"
+          placeholder="CPA"
+          step="0.1"
+          value={newEntry.cpa}
+          onChange={handleChange}
+        />
+        <button onClick={handleAddEntry}>Add Entry</button>
+      </div>
+
+      <h2 className="section-title">User Analytics</h2>
+      <div className="analytics-container">
+        <div className="analytics-card">
+          <h3>User Retention Rate</h3>
+          <p className="analytics-value">87%</p>
+        </div>
+        <div className="analytics-card">
+          <h3>App Downloads</h3>
+          <p className="analytics-value">12,000</p>
+        </div>
+        <div className="analytics-card">
+          <h3>Activation Rate</h3>
+          <p className="analytics-value">76%</p>
+        </div>
+        <div className="analytics-card">
+          <h3>Net Promoter Score (NPS)</h3>
+          <p className="analytics-value">+52</p>
+        </div>
       </div>
     </div>
   );
