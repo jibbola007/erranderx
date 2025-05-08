@@ -43,7 +43,7 @@ const handleSubmit = async (e) => {
     <div className="landing-container">
       <header className="landing-header">
         <h1>Erranderx</h1>
-        <button onClick={() => navigate("/dashboard")}>Dashboard</button>
+        
       </header>
 
       <section className="hero">
